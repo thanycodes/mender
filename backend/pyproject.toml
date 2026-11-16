@@ -1,0 +1,27 @@
+[project]
+name = "mender-backend"
+version = "0.1.0"
+description = "Mender API and worker code"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "fastapi>=0.163.1",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+# E/F: pycodestyle + pyflakes basics, I: import sorting, B: common bug patterns, UP: modern syntax
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pytest>=9.2.0",
+    "ruff>=0.17.5",
+]

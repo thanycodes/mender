@@ -16,4 +16,13 @@ Next.js · TypeScript · Tailwind | FastAPI · Pydantic · SQLAlchemy · Alembic
 - [ ] Phase 4: validation and self-healing
 - [ ] Phase 5: evals, auth, deploy
 
-A run guide will go here once the services exist.
+## Running locally
+
+Backend (Python 3.12, [uv](https://docs.astral.sh/uv/)):
+
+```bash
+cd backend
+uv sync                                  # create .venv and install deps
+uv run uvicorn app.main:app --reload     # API on http://localhost:8000 (docs at /docs)
+uv run ruff check . && uv run pytest     # lint + tests
+```

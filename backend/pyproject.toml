@@ -5,6 +5,7 @@ description = "Mender API and worker code"
 requires-python = ">=3.12,<3.13"
 dependencies = [
     "fastapi>=0.163.1",
+    "selectolax>=1.0.2",
     "uvicorn[standard]>=0.54.0",
 ]
 

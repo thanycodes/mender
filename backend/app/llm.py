@@ -14,6 +14,7 @@ LLAMA_API_KEY (required), LLAMA_BASE_URL and LLAMA_MODEL (optional overrides).
 
 import json
 import os
+from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
@@ -119,11 +120,17 @@ def _client() -> httpx.Client:
 
 
 def generate_rules(
-    html: str, fields: list[FieldSpec], *, client: httpx.Client | None = None
+    html: str,
+    fields: list[FieldSpec],
+    *,
+    check: Callable[[Rules], None] | None = None,
+    client: httpx.Client | None = None,
 ) -> RulesResult:
     """Ask Llama for rules for `fields` on this (already shrunk) page.
 
     Slow (seconds) and costs credits, so only workers call this, at setup and for repairs.
+    `check` lets the caller test-run the rules (e.g. "must match at least one row"); a
+    ValueError from it counts as a bad answer and is fed back like a schema error.
     Pass `client` to inject a fake transport in tests.
     """
     if not fields:
@@ -158,6 +165,8 @@ def generate_rules(
             tokens += int((payload.get("usage") or {}).get("total_tokens") or 0)
             try:
                 rules = parse_rules(content, fields)
+                if check:
+                    check(rules)
             except ValueError as exc:
                 if attempt == MAX_ATTEMPTS:
                     raise LLMError(f"No valid rules after {attempt} attempts: {exc}") from exc

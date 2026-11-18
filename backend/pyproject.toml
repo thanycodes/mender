@@ -5,6 +5,7 @@ description = "Mender API and worker code"
 requires-python = ">=3.12,<3.13"
 dependencies = [
     "fastapi>=0.163.1",
+    "httpx>=0.28.1",
     "selectolax>=1.0.2",
     "uvicorn[standard]>=0.54.0",
 ]
@@ -22,7 +23,6 @@ testpaths = ["tests"]
 
 [dependency-groups]
 dev = [
-    "httpx>=0.28.1",
     "pytest>=9.2.0",
     "ruff>=0.17.5",
 ]

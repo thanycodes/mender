@@ -7,7 +7,7 @@ Self-healing web scrapers. You describe the data you want from a page, an LLM wr
 The full design is in [`docs/MENDER_PROJECT_PLAN.md`](docs/MENDER_PROJECT_PLAN.md).
 
 ## Stack
-Next.js · TypeScript · Tailwind | FastAPI · Pydantic · SQLAlchemy · Alembic | Postgres 16 | Redis + RQ (Phase 3) | httpx · Playwright · selectolax | Llama 4 (Phase 2)
+Next.js · TypeScript · Tailwind | FastAPI · Pydantic · SQLAlchemy · Alembic | Postgres 17 | Redis + RQ (Phase 3) | httpx · Playwright · selectolax | Llama 4 (Phase 2)
 
 ## Roadmap
 - [ ] Phase 1: plain scraper with a web page
@@ -18,11 +18,19 @@ Next.js · TypeScript · Tailwind | FastAPI · Pydantic · SQLAlchemy · Alembic
 
 ## Running locally
 
+Database (Postgres in Docker; [OrbStack](https://orbstack.dev) or Docker Desktop):
+
+```bash
+cp .env.example .env                     # once; .env is gitignored
+docker compose up -d --wait              # Postgres on localhost:5432 (+ a mender_test DB for pytest)
+cd backend && uv run alembic upgrade head   # create/upgrade the tables
+```
+
 Backend (Python 3.12, [uv](https://docs.astral.sh/uv/)):
 
 ```bash
 cd backend
 uv sync                                  # create .venv and install deps
 uv run uvicorn app.main:app --reload     # API on http://localhost:8000 (docs at /docs)
-uv run ruff check . && uv run pytest     # lint + tests
+uv run ruff check . && uv run pytest     # lint + tests (DB tests need Postgres running)
 ```

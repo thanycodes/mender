@@ -4,9 +4,12 @@ version = "0.1.0"
 description = "Mender API and worker code"
 requires-python = ">=3.12,<3.13"
 dependencies = [
+    "alembic>=1.20.1",
     "fastapi>=0.163.1",
     "httpx>=0.28.1",
+    "psycopg[binary]>=3.2",
     "selectolax>=1.0.2",
+    "sqlalchemy>=2.0",
     "uvicorn[standard]>=0.54.0",
 ]
 

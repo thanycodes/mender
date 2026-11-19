@@ -1,0 +1,22 @@
+# Infrastructure only. The API and web app run natively in development (faster reloads).
+# Start:  docker compose up -d      Stop:  docker compose down      Wipe data:  docker compose down -v
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-mender}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mender}
+      POSTGRES_DB: ${POSTGRES_DB:-mender}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data  # Survives restarts; removed only by `down -v`.
+      - ./infra/postgres-init:/docker-entrypoint-initdb.d:ro  # Runs once, on an empty volume.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-mender}"]
+      interval: 2s
+      timeout: 3s
+      retries: 15
+
+volumes:
+  pgdata:

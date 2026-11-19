@@ -81,7 +81,7 @@ def test_warns_about_fields_that_look_wrong() -> None:
 
 
 def test_cli_reports_errors_without_a_traceback(capsys: pytest.CaptureFixture[str]) -> None:
-    assert main(["/no/such/page.html", "title"]) == 1
+    assert main(["generate", "/no/such/page.html", "title"]) == 1
     assert "error:" in capsys.readouterr().err
 
 

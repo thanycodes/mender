@@ -41,3 +41,9 @@ Test site (a page to scrape; the API only accepts http(s) URLs):
 ```bash
 python3 -m http.server 8001 -d testsite   # http://localhost:8001/books/index.html
 ```
+
+Web app (Next.js, on http://localhost:3000; talks to the API on :8000):
+
+```bash
+cd web && cp .env.example .env.local && npm install && npm run dev
+```

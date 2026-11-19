@@ -23,6 +23,7 @@ select = ["E", "F", "I", "B", "UP"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["tests"]  # lets tests import shared helpers from tests/fakes.py
 
 [dependency-groups]
 dev = [

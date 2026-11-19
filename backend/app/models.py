@@ -50,6 +50,8 @@ class Job(Base):
     schedule: Mapped[str | None] = mapped_column(String(20))  # Set on approve.
     # Why rule generation failed, shown to the user. NULL while pending or after success.
     error: Mapped[str | None] = mapped_column(Text)
+    # Set by "Run now"; the worker picks it up and clears it. Redis replaces this in Phase 3.
+    run_requested_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     versions: Mapped[list["RuleVersion"]] = relationship(

@@ -3,8 +3,8 @@
 import json
 from pathlib import Path
 
-import httpx
 import pytest
+from fakes import fake_llama
 
 from app.cli import main, parse_field
 from app.llm import LLMError
@@ -17,19 +17,6 @@ FIELDS = [parse_field(f) for f in ["title", "author", "price:number", "in_stock:
 WRONG_ROWS = json.dumps(
     {**json.loads(GOOD), "row_selector": "div.does-not-exist"}  # Valid JSON, matches nothing.
 )
-
-
-def fake_llama(*contents: str) -> tuple[httpx.Client, list[dict]]:
-    requests: list[dict] = []
-    replies = iter(contents)
-
-    def handler(request: httpx.Request) -> httpx.Response:
-        requests.append(json.loads(request.content))
-        message = {"role": "assistant", "content": next(replies)}
-        return httpx.Response(200, json={"choices": [{"message": message}], "usage": {}})
-
-    client = httpx.Client(base_url="https://llama.test", transport=httpx.MockTransport(handler))
-    return client, requests
 
 
 def test_preview_runs_rules_on_the_full_page() -> None:

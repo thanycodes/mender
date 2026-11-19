@@ -32,5 +32,12 @@ Backend (Python 3.12, [uv](https://docs.astral.sh/uv/)):
 cd backend
 uv sync                                  # create .venv and install deps
 uv run uvicorn app.main:app --reload     # API on http://localhost:8000 (docs at /docs)
+uv run --env-file ../.env python -m app.worker   # worker: Llama calls + runs (needs LLAMA_API_KEY)
 uv run ruff check . && uv run pytest     # lint + tests (DB tests need Postgres running)
+```
+
+Test site (a page to scrape; the API only accepts http(s) URLs):
+
+```bash
+python3 -m http.server 8001 -d testsite   # http://localhost:8001/books/index.html
 ```

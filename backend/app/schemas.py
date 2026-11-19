@@ -7,10 +7,10 @@ clients, and we never accidentally leak a column just because it exists.
 from datetime import datetime
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_validator
 
 from app.models import Job
-from app.rules import FieldSpec
+from app.rules import FieldSpec, Rules
 
 Schedule = Literal["manual", "hourly", "daily"]
 
@@ -47,3 +47,47 @@ class RecordOut(BaseModel):
 class RecordPage(BaseModel):
     total: int
     items: list[RecordOut]
+
+
+class JobCreate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    # Only web URLs: accepting file paths here would let any API caller read server files.
+    url: HttpUrl
+    fields: list[FieldSpec] = Field(min_length=1, max_length=20)
+
+    @field_validator("fields")
+    @classmethod
+    def unique_names(cls, fields: list[FieldSpec]) -> list[FieldSpec]:
+        names = [f.name for f in fields]
+        if len(names) != len(set(names)):
+            raise ValueError("field names must be unique")
+        return fields
+
+
+class JobCreated(BaseModel):
+    job_id: int
+    status: str
+
+
+class Preview(BaseModel):
+    """Polled by the web app every 2 s while the worker asks Llama for rules."""
+
+    state: Literal["pending", "ready", "failed"]
+    error: str | None = None
+    version_no: int | None = None
+    rules: Rules | None = None
+    row_count: int = 0
+    rows: list[dict[str, Any]] = []
+    warnings: list[str] = []
+
+
+class Approve(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    schedule: Schedule
+
+
+class RunQueued(BaseModel):
+    job_id: int
+    status: Literal["queued"] = "queued"
